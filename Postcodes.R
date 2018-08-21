@@ -121,3 +121,16 @@ exeterdata <- subset(draft2, draft2$LAD11NM == 'Exeter')
 
 # Saving work
 write.csv(draft2, "myData/dataset.csv")
+
+##### Fixing issues #####
+mean(age$`All usual residents`[age$LSOA11NM == 'Exeter'])
+exeage <- fread('Files/exeterage.csv')
+unique(LSOA$LAD11NM)
+allage <- fread('Files/allage.csv')
+colnames(allage)[1:16] <- c("LSOA11NM", "DEL", "Population", "DEL2", "DEL3","Age 65-74 (%)", "DEL4", "Age 75-84 (%)",
+                            "DEL5", "Age 85-89 (%)", "DEL6", "Age 90+ (%)", "Mean Age", "DEL7", "Median Age", "DEL8")
+Age <- subset(allage, select = -c(2, 4, 5, 7, 9, 11, 14, 16))                            
+Agelsoa <- LSOA %>%
+  full_join(Age, by = 'LSOA11NM')
+                            
+                            
