@@ -51,7 +51,8 @@ rm(merge)
 
 pop <- fread('Files/poplsoa.csv')
 pop2 <- subset(pop, select = -c(3, 9))
-colnames(pop2)[1:7] <- c("LSOA11NM", "LSOA11CD", "Males", "Males (%)", "Females", "Females (%)", "Density (number of persons per hectare)")
+colnames(pop2)[1:7] <- c("LSOA11NM", "LSOA11CD", "Males", "Males (%)", "Females", "Females (%)",
+                         "Density (number of persons per hectare)")
 
 pop3 <- subset(pop2, select = -2)
 
@@ -67,8 +68,9 @@ rm(mergepop)
 
 ##### Unemployed #####
 un <- fread('Files/unemployedlsoa.csv')
-colnames(un)[1:6] <- c("LSOA11NM", "LSOA11CD", "Households", "Males (%)", "Households with no adults employed", "Households with no adults employed (%)")
-un <- subset(un, select = -c(2, 3, 4))
+colnames(un)[1:6] <- c("LSOA11NM", "LSOA11CD", "Households", "Males (%)", "Households with no adults employed",
+                       "Households with no adults employed (%)")
+un <- subset(un, select = -c(2, 4, 5))
 
 ##### Merge lsoa #####
 merge3 <- LSOA %>%
@@ -132,5 +134,134 @@ colnames(allage)[1:16] <- c("LSOA11NM", "DEL", "Population", "DEL2", "DEL3","Age
 Age <- subset(allage, select = -c(2, 4, 5, 7, 9, 11, 14, 16))                            
 Agelsoa <- LSOA %>%
   full_join(Age, by = 'LSOA11NM')
-                            
-                            
+
+rm(age, Agelsoa, exeage, allage)
+write.csv(Age, 'Files/CompleteAge.csv')
+
+mean(Age$Population)
+mean(Agelsoa$Population)
+
+employment <- fread('Files/Employment2.csv')
+colnames(employment)[1:6] <- c("LSOA11NM", "DEL", "Households", "DEL2", "DEL3", "No adults in employment in household (%)")
+Employment <- subset(employment, select = -c(2, 4, 5))
+rm(employment)
+write.csv(Employment, 'Files/CompleteEmployment.csv')
+
+# Only 452 obs. for employment check at end (rest 457 so far) - sorted
+
+rm(draft, draft2, merge4, parishes, un)
+
+pop <- fread('Files/Population.csv')
+colnames(pop)[1:10] <- c("LSOA11NM", "DEL", "DEL2", "DEL3", "Males", "Males (%)", "Females", "Females (%)",
+                         "Density (number of persons per hectare)", "DEL4")
+Population <- select(pop, -c(2, 3, 4, 10))
+rm(pop, pop3)
+
+write.csv(Population, 'Files/CompletePopulation.csv')
+
+Employment <- employment
+rm(employment)
+
+rm(exeterdata)
+
+cars <- fread('Files/Cars.csv')
+colnames(cars)[1:16] <- c("LSOA11NM", "DEL", "DEL2", "DEL3", "DEL4", "No cars or vans in household (%)", "DEL9",
+                            "1 car or van in household (%)", "DEL5", "2 cars or vans in household (%)", "DEL6",
+                            "3 cars or vnas in household (%)", "DEL7", "4 or more cars or vans in household (%)",
+                            "Total cars or vans in area", "DEL8")
+Cars <- select(cars, -c(2, 3, 4, 5, 7, 9, 11, 13, 16))
+rm(cars)
+colnames(Cars)[5] <- "3 cars or vans in household (%)"
+
+Merge <- LSOA %>%
+  full_join(Age, by = 'LSOA11NM') %>%
+  full_join(Cars, by = 'LSOA11NM') %>%
+  full_join(Employment, by = 'LSOA11NM') %>%
+  full_join(Population, by = 'LSOA11NM') %>%
+  full_join(Religion, by = 'LSOA11NM')
+
+# Rearrange columns to make best sense
+
+write.csv(Merge, 'Files/FirstMerge.csv')
+
+##### Adding more variables #####
+
+# Variables: Age, Cars, Employment, Population, Religion, Ethnic group, hours works (male/female split),
+# economic activity by sex, qualifications/students/students employed/unemployed/inactive, Household type,
+# industry by sex, occupation by sex Tenure, Household size and central heating, Health, Care home (y/n), NS Sec.
+
+# Add deprivation data.
+
+Religion <- fread('Files/Religion.csv')
+
+Draft <- Merge[c(1:6, 25, 21:24, 7:12, 19:20, 13:18, 34, 26:33, 35)]
+
+write.csv(Draft, 'Files/Draft.csv')
+
+Ethnicity <- fread('Files/EthnicityBasic.csv')
+
+Draft2 <- Draft %>%
+  full_join(Ethnicity, by = 'LSOA11NM')
+
+Hours <- fread('Files/HoursWorked.csv')
+
+Draft2 <- Draft2 %>%
+  full_join(Hours, by = 'LSOA11NM')
+
+EAM <- fread('Files/EconomicAMale.csv')
+EAF <- fread('Files/EF.csv')
+
+EA <- EAM %>%
+  full_join(EAF, by = 'LSOA11NM')
+
+rm(EAM, EAF)
+
+Draft2 <- Draft2 %>%
+  full_join(EA, by = 'LSOA11NM')
+  full_join(EA, by = 'LSOA11NM')
+
+write.csv(Draft2, 'Files/Draft2.csv')
+
+accom <- fread('Files/accom.csv')
+rm(accom)
+Accom <- fread('Files/accom.csv')
+
+Qualif <- fread('Files/Qualif.csv')                
+
+Jobs <- fread('Files/Jobs.csv')
+
+Industry <- fread('Files/Industry.csv')
+
+Tenure <- fread('Files/Tenure.csv')
+
+Beds <- fread('Files/Bedrooms.csv')
+
+Health <- fread('Files/HealthCare.csv')
+rm(health)
+
+CareHomes <- fread('Files/CareHome.csv')
+
+NsSec <- fread('Files/NsSec.csv')
+
+Merge <- LSOA %>%
+  full_join(Age, by = 'LSOA11NM') %>%
+  full_join(Cars, by = 'LSOA11NM') %>%
+  full_join(Employment, by = 'LSOA11NM') %>%
+  full_join(Population, by = 'LSOA11NM') %>%
+  full_join(Religion, by = 'LSOA11NM') %>%
+  full_join(Ethnicity, by = 'LSOA11NM') %>%
+  full_join(Hours, by = 'LSOA11NM') %>%
+  full_join(EA, by = 'LSOA11NM') %>%
+  full_join(Accom, by = 'LSOA11NM') %>%
+  full_join(Qualif, by = 'LSOA11NM') %>%
+  full_join(Jobs, by = 'LSOA11NM') %>%
+  full_join(Industry, by = 'LSOA11NM') %>%
+  full_join(Tenure, by = 'LSOA11NM') %>%
+  full_join(Beds, by = 'LSOA11NM') %>%
+  full_join(Health, by = 'LSOA11NM') %>%
+  full_join(CareHomes, by = 'LSOA11NM') %>%
+  full_join(NsSec, by = 'LSOA11NM')
+
+write.csv(Merge, 'Files/CompleteMerge.csv')
+
+# Reorder this file next step, then add other data
