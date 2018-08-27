@@ -265,3 +265,83 @@ Merge <- LSOA %>%
 write.csv(Merge, 'Files/CompleteMerge.csv')
 
 # Reorder this file next step, then add other data
+
+##### Adding Deprivation Data #####
+
+rm(depEX)
+
+# East Devon
+
+DepED <- fread('Files/DepED.csv')
+rm(depED)
+DeprED <- subset(DepED, DepED$`Postcode Status` == 'Live')
+rm(DepED)
+rm(deprED)
+write.csv(DeprED, 'Files/ED.csv')
+
+# Mid Devon
+
+DepMD <- fread('Files/DepMD.csv')
+DeprMD <- subset(DepMD, DepMD$`Postcode Status` == 'Live')
+rm(DepMD)
+write.csv(DeprMD, 'Files/MD.csv')
+
+# North Devon
+
+DepND <- fread('Files/DepND.csv')
+DeprND <- subset(DepND, DepND$`Postcode Status` == 'Live')
+rm(DepND)
+write.csv(DeprND, 'Files/ND.csv')
+
+# West Devon
+
+DepWD <- fread('Files/DepWD.csv')
+DeprWD <- subset(DepWD, DepWD$`Postcode Status` == 'Live')
+rm(DepWD)
+write.csv(DeprWD, 'Files/WD.csv')
+
+# Exeter
+
+DepEX <- fread('Files/DepEX.csv')
+DeprEX <- subset(DepEX, DepEX$`Postcode Status` == 'Live')
+rm(DepEX)
+write.csv(DeprEX, 'Files/EX.csv')
+
+# South Hams
+
+DepSH <- fread('Files/DepSH.csv')
+DeprSH <- subset(DepSH, DepSH$`Postcode Status` == 'Live')
+rm(DepSH)
+write.csv(DeprSH, 'Files/SH.csv')
+
+# Teignbridge
+
+DepTE <- fread('Files/DepTE.csv')
+DeprTE <- subset(DepTE, DepTE$`Postcode Status` == 'Live')
+rm(DepTE)
+write.csv(DeprTE, 'Files/TE.csv')
+
+# Torridge
+
+DepTO <- fread('Files/DepTO.csv')
+DeprTO <- subset(DepTO, DepTO$`Postcode Status` == 'Live')
+rm(DepTO)
+write.csv(DeprTO, 'Files/TO.csv')
+
+# This is wrong
+colnames(LSOA)[3] <- "LSOA Code"
+
+IoD <- LSOA %>%
+  full_join(DeprED, by = 'LSOA Code') %>%
+  full_join(DeprMD, by = 'LSOA Code') %>%
+  full_join(DeprND, by = 'LSOA Code') %>%
+  full_join(DeprWD, by = 'LSOA Code') %>%
+  full_join(DeprEX, by = 'LSOA Code') %>%
+  full_join(DeprSH, by = 'LSOA Code') %>%
+  full_join(DeprTE, by = 'LSOA Code') %>%
+  full_join(DeprTO, by = 'LSOA Code')
+# Loading in
+
+ID <- fread('Files/ED.csv')
+
+# Remove unnecessary variables from ID, join with Merge  
