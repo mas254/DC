@@ -344,4 +344,57 @@ IoD <- LSOA %>%
 
 ID <- fread('Files/ED.csv')
 
-# Remove unnecessary variables from ID, join with Merge  
+# Remove unnecessary variables from ID, join with Merge
+
+colnames(ID)
+
+Ind <- ID[c(2, 4:29)]
+
+colnames(Ind)[1] <- "PCD8"
+
+head(Combd)
+
+rm(ID)
+rm(IoD)
+
+Combd <- subset(Merge, select = c(1:6, 21:25, 7:12, 36:45, 26:35, 230:244, 110:122, 46:58, 59:92, 123:209, 259:303, 19, 13:18, 20, 210:218,
+                227:229, 219:226, 93:109, 245:258))
+
+colnames(Combd)
+
+FullData <- Combd %>%
+  full_join(Ind, by = 'PCD8')
+
+test <- subset(FullData, select = 1:5)
+View(test)
+is.na(test$PCD8)
+
+test2 <- subset(Merge, select = 1:5)
+View(test2)
+
+test3 <- subset(Ind, select = 1:5)
+View(test3)
+
+test4 <- subset(Combd, select = 1:5)
+View(test4)
+
+test5 <- test3 %>%
+  full_join(test4, by = 'PCD8')
+View(test5)
+
+unique(Ind$PCD8)
+unique(Combd$PCD8)
+
+# We have two datasets - Comb for the census data and Ind for the indicies of multiple deprivation data
+
+# save.image("Files/AllLoaded.RData")
+rm(list = ls())
+load("Files/AllLoaded.RData")
+
+write.csv(Ind, "Files/IofMDFull.csv")
+write.csv(Combd, "Files/CensusFull.csv")
+
+colnames(Ind)
+colnames(Combd)
+
+# Shiny next!
