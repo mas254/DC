@@ -23,8 +23,8 @@ ui <- fluidPage(
       ),
       conditionalPanel(
         'input.dataset === "cen"',
-        checkboxGroupInput("show_vars", "Columns in 2011 Census to show:",
-                           names(imd), selected = names(imd))
+        checkboxGroupInput("show_vars2", "Columns in 2011 Census to show:",
+                           names(cen), selected = names(cen))
       ),
       helpText("Create a csv file containing information
                from the Indicies of Multiple Deprivation Data
@@ -42,14 +42,14 @@ ui <- fluidPage(
 server <- function(input, output){
   
   # choose columns to display
-  iod = imd[sample(nrow(imd), 1000), ]
+  iod = imd[sample(nrow(imd), ), ]
   output$mytable1 <- DT::renderDataTable({
     DT::datatable(iod[, input$show_vars, drop = FALSE])
   })
   
-  cens = cen[sample(nrow(cen), 1000), ]
+  cens = cen[sample(nrow(cen), ), ]
   output$mytable2 <- DT::renderDataTable({
-    DT::datatable(cens[, input$show_vars, drop = FALSE])
+    DT::datatable(cens[, input$show_vars2, drop = FALSE])
   })
   
 }
