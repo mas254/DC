@@ -29,10 +29,12 @@ ui <- fluidPage(
       helpText("Create a csv file containing information
                from the Indicies of Multiple Deprivation Data
                for Devon postcodes."),
+      fluidRow(column(7, dataTableOutput('dto')))
+    ),
     mainPanel(
       tabsetPanel(id = 'dataset',
-              tabPanel("2011 Census", DT::dataTableOutput("mytable1")),
-              tabPanel("Indicies of Multiple Deprivation", DT::dataTableOutput("mytable2")))
+              tabPanel("2011 Census", DT::dataTableOutput("mytable2")),
+              tabPanel("Indicies of Multiple Deprivation", DT::dataTableOutput("mytable1")))
     )
   )
 )
@@ -47,7 +49,7 @@ server <- function(input, output){
   
   cens = cen[sample(nrow(cen), 1000), ]
   output$mytable2 <- DT::renderDataTable({
-    DT::datatable(cen[, input$show_vars, drop = FALSE])
+    DT::datatable(cens[, input$show_vars, drop = FALSE])
   })
   
 }
