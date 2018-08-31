@@ -29,6 +29,9 @@ ui <- fluidPage(
       helpText("Create a csv file containing information
                from the Indicies of Multiple Deprivation Data
                for Devon postcodes."),
+      helpText("Make sure to input the postcode with a space
+               before the final three digits (e.g. EX39 1PS or
+               EX4 6JL rather than EX391PS or EX46JL)."),
       fluidRow(column(7, dataTableOutput('dto')))
     ),
     mainPanel(
