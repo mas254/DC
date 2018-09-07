@@ -9,6 +9,11 @@ imd1 <- readRDS("data/imd.rds")
 cen1 <- readRDS("data/cen.rds")
 cen <- as.data.frame(cen1)
 imd <- as.data.frame(imd1)
+imd$PCD8 <- factor(imd$PCD8, ordered = TRUE)
+cen$PCD8 <- factor(cen$PCD8, ordered = TRUE)
+setnames(imd, "PCD8", "Postcode")
+setnames(cen, "PCD8", "Postcode")
+cen$PCD7 <- NULL
 
 
 # User interface ----
@@ -19,6 +24,13 @@ ui <- fluidPage(
       helpText("Create a csv file containing information
                from the Indicies of Multiple Deprivation Data
                for Devon postcodes."),
+      helpText("Type the postcode you want to select in the search
+               bar beneath the 'Postcode' column header, then click
+               on the postcode when it appears in the drop down menu
+               to filter the table."),
+      helpText("For multiple postcodes, simply
+               type another postcode into this search bar after
+               selecting the first postcode."),
       helpText("Make sure to input the postcode with a space
                before the final three digits (e.g. EX39 1PS or
                EX4 6JL rather than EX391PS or EX46JL)."),
@@ -47,13 +59,13 @@ server <- function(input, output){
   iod = imd[sample(nrow(imd), ), ]
   
   output$mytable1 <- DT::renderDataTable({
-    DT::datatable(iod[, input$show_vars, drop = FALSE])
+    DT::datatable(iod[, input$show_vars, drop = FALSE], filter = "top")
   })
   
   cens = cen[sample(nrow(cen), ), ]
   
   output$mytable2 <- DT::renderDataTable({
-    DT::datatable(cens[, input$show_vars2, drop = FALSE])
+    DT::datatable(cens[, input$show_vars2, drop = FALSE], filter = "top")
   })
 
   output$downloadData <- downloadHandler(
