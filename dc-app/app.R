@@ -35,7 +35,10 @@ ui <- fluidPage(
                before the final three digits (e.g. EX39 1PS or
                EX4 6JL rather than EX391PS or EX46JL)."),
       fluidRow(
-        p(downloadButton('downloadData', 'Download'))
+        p(downloadButton('downloadMoreData', 'Download 2011 Census Data'))
+      ),
+      fluidRow(
+        p(downloadButton('downloadData', 'Download Indicies of Multiple Deprivation Data'))
       ),
       checkboxGroupInput("show_vars2", "Columns in 2011 Census to show:",
                          names(cen), selected = names(cen)
@@ -67,22 +70,29 @@ server <- function(input, output){
   output$mytable2 <- DT::renderDataTable({
     DT::datatable(cens[, input$show_vars2, drop = FALSE], filter = "top")
   })
-
-  output$downloadData <- downloadHandler(
+  
+  moredata <- reactive(cen)
+  
+  output$downloadMoreData <- downloadHandler(
     filename = function() {
-      paste("data-", Sys.Date(), ".csv", sep="")
+      paste('Filtered data-', Sys.time(), '.csv', sep = '')
     },
-    content = function(file) {
-      write.csv(output$mytable1, file)
+    content = function(file){
+      write.csv(moredata()[input[["mytable2_rows_all"]], ],file)
     }
   )
+
+  thedata <- reactive(imd)
   
-  output$downloadData = downloadHandler('imdfiltered.csv', content = function(file) {
-    s = input$show_vars_rows_all
-    write.csv(imd[s, , drop = FALSE], file)
-  })
-  
-  
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste('Filtered data-', Sys.Date(), '.csv', sep = '')
+    },
+    content = function(file){
+      write.csv(thedata()[input[["mytable1_rows_all"]], ],file)
+    }
+  )
+
 }
 
 shinyApp(ui = ui, server = server)
