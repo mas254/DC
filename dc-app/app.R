@@ -85,7 +85,7 @@ server <- function(input, output){
   
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste('Filtered data-', Sys.Date(), '.csv', sep = '')
+      paste('Filtered data-', Sys.time(), '.csv', sep = '')
     },
     content = function(file){
       write.csv(thedata()[input[["mytable1_rows_all"]], ],file)
