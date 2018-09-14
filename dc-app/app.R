@@ -45,8 +45,7 @@ ui <- fluidPage(
       ),
         checkboxGroupInput("show_vars", "Columns in Indicies of Multiple Deprivation to show:",
                            names(imd), selected = names(imd)
-      ),
-      fluidRow(column(2, dataTableOutput('dto')))
+      )
     ),
     mainPanel(
       tabsetPanel(id = 'dataset',
@@ -71,7 +70,7 @@ server <- function(input, output){
     DT::datatable(cens[, input$show_vars2, drop = FALSE], filter = "top")
   })
   
-  moredata <- reactive(cen)
+  moredata <- reactive(cens)
   
   output$downloadMoreData <- downloadHandler(
     filename = function() {
@@ -82,7 +81,7 @@ server <- function(input, output){
     }
   )
 
-  thedata <- reactive(imd)
+  thedata <- reactive(iod)
   
   output$downloadData <- downloadHandler(
     filename = function() {
